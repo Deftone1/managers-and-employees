@@ -9,7 +9,68 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const teamMembers = [];
 
+function init() {
+    console.log("Please build your team.");
+    inquirer.prompt([{
+        type: 'input',
+        name: 'managerName',
+        message: "What is your manager's name?"
+    },
+    {
+        type: 'input',
+        name: 'managerId',
+        message: "What is your manager's ID number?"
+    },
+    {
+        type: 'input',
+        name: 'managerEmail',
+        message: "What is your manager's e-mail address?"
+    },
+    {
+        type: 'input',
+        name: 'managerOfficeNumber',
+        message: "What is your manager's office number?"
+    }
+
+    ]).then(response => {
+        console.log("Manager answers:", response)
+        const managerIs = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeNumber);
+        teamMembers.push(managerIs)
+        // console.log(teamMembers)
+        buildTeam();
+    }).catch(err => {
+        console.log("Please enter a valid response", err)
+    })
+
+};
+
+function buildTeam() {
+    inquirer.prompt([{
+        type: 'list',
+        name: 'memberType',
+        message: "What type of team members would you like to add?",
+        choices: [
+            "Engineer",
+            "Intern",
+            "I do not want to add any more members"
+        ]
+    }]).then(response => {
+        console.log(response)
+        if (response.memberType === "Engineer") {
+            // create function for engineer
+        } else if (response.memberType === "Intern") {
+            // create function for intern
+        } else {
+            fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+        }
+        
+    })
+
+}
+
+init();
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
