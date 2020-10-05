@@ -1,1 +1,1 @@
-Command line generatorthat displays information and titles about the employees
+Command line generator that displays information and titles about the employees
