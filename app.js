@@ -11,6 +11,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 const teamMembers = [];
 
+// Main initializing function starting with manager prompt
 function init() {
     console.log("Please build your team.");
     inquirer.prompt([{
@@ -45,7 +46,7 @@ function init() {
     })
 
 };
-
+// Build Team Function
 function buildTeam() {
     inquirer.prompt([{
         type: 'list',
@@ -61,7 +62,7 @@ function buildTeam() {
         if (response.memberType === "Engineer") {
             engineerResponse();
         } else if (response.memberType === "Intern") {
-            // create function for intern
+            internResponse();
         } else {
             fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
         }
@@ -69,7 +70,7 @@ function buildTeam() {
     })
 
 }
-
+// Main function for the Engineer's questions and responses
 function engineerResponse() {
     inquirer.prompt([{
         type: 'input',
@@ -118,24 +119,58 @@ function engineerResponse() {
     })
 };
 
+// Main function for the Intern's questions and responses
+function internResponse() {
+    inquirer.prompt([{
+        type: 'input',
+        name: 'internResponse',
+        message: "What is your intern's name?"
+    },
+    {
+        type: 'input',
+        name: 'internId',
+        message: "What is your intern's ID number?"
+    },
+    {
+        type: 'input',
+        name: 'engineerEmail',
+        message: "What is your engineer's e-mail address?"
+    },
+    {
+        type: 'input',
+        name: 'internGithub',
+        message: "What is your intern's GitHub account?"
+
+    },
+    {
+        type: 'list',
+        name: 'memberType',
+        message: "What type of team members would you like to add?",
+        choices: [
+            "Engineer",
+            "Intern",
+            "I do not want to add any more members"
+        ]
+    }
+
+    ]).then(response => {
+        console.log("Intern answers:", response)
+        const internIs = new Intern(response.internName, response.internId, response.internEmail, response.internGithub);
+        teamMembers.push(internIs)
+        if (response.memberType === "Engineer") {
+            engineerResponse();
+        } else if (response.memberType === "Intern") {
+            internResponse();
+        } else {
+            fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+        }
+
+    })
+};
+
 
 init();
 
 
 
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
