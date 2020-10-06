@@ -38,7 +38,7 @@ function init() {
         console.log("Manager answers:", response)
         const managerIs = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeNumber);
         teamMembers.push(managerIs)
-        // console.log(teamMembers)
+        
         buildTeam();
     }).catch(err => {
         console.log("Please enter a valid response", err)
@@ -59,25 +59,70 @@ function buildTeam() {
     }]).then(response => {
         console.log(response)
         if (response.memberType === "Engineer") {
-            // create function for engineer
+            engineerResponse();
         } else if (response.memberType === "Intern") {
             // create function for intern
         } else {
             fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
         }
-        
+
     })
 
 }
 
+function engineerResponse() {
+    inquirer.prompt([{
+        type: 'input',
+        name: 'engineerResponse',
+        message: "What is your engineer's name?"
+    },
+    {
+        type: 'input',
+        name: 'engineerId',
+        message: "What is your engineer's ID number?"
+    },
+    {
+        type: 'input',
+        name: 'engineerEmail',
+        message: "What is your engineer's e-mail address?"
+    },
+    {
+        type: 'input',
+        name: 'engineerGithub',
+        message: "What is your engineer's GitHub account?"
+
+    },
+    {
+        type: 'list',
+        name: 'memberType',
+        message: "What type of team members would you like to add?",
+        choices: [
+            "Engineer",
+            "Intern",
+            "I do not want to add any more members"
+        ]
+    }
+
+    ]).then(response => {
+        console.log("Engineer answers:", response)
+        const engineerIs = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGithub);
+        teamMembers.push(engineerIs)
+        if (response.memberType === "Engineer") {
+            engineerResponse();
+        } else if (response.memberType === "Intern") {
+            // create function for intern
+        } else {
+            fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+        }
+
+    })
+};
+
+
 init();
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
